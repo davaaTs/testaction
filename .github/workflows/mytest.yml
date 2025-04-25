@@ -1,0 +1,12 @@
+name: TEst
+
+on: workflow_dispatch
+
+jobs:
+  check_vars:
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Say Hello"
+        run: echo "$Greeting $uploadTrack
+        env:
+          uploadTrack: ${{ startsWith(github.ref, 'refs/tags/production-') && 'production' || 'qa' }}

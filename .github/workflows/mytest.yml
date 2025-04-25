@@ -8,9 +8,10 @@ jobs:
     steps:
       - name: "Say Hello"
         env:
+          Greeting: Helloo
           uploadTrack: ${{ startsWith(github.ref, 'refs/tags/production-') && 'production' || 'qa' }}
         run: |
-          echo "$Greeting $uploadTrack"
+          echo "$Greeting track is $uploadTrack"
           echo "VERCEL_TARGET=$uploadTrack" >> "$GITHUB_ENV"
       - name: "Say Hello again"
         run: echo "$Greeting VERCEL_TARGET $VERCEL_TARGET"

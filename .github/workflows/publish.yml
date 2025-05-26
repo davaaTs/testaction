@@ -22,5 +22,7 @@ jobs:
       with:
         github-token: ${{ secrets.github_token }}
     - name: Print version & publish
-      run: "echo 'New Version: ${{ steps.bump.outputs.version }} '" & mvn deploy
+      run: |
+        echo "New Version: ${{ steps.bump.outputs.version }}"
+        echo "deploy..." & mvn deploy
         GITHUB_TOKEN: ${{ github.token }}

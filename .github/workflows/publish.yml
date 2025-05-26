@@ -16,12 +16,11 @@ jobs:
       with:
         java-version: '17'
         distribution: 'temurin'
-    - name: Increment version
-      id: increment-version
-      uses: RichardInnocent/semantic-versioning-maven@v0.1.0
-    - name: Print & publish if version changed
-      if: steps.increment-version.outputs.previous-version != steps.increment-version.outputs.new-version
-      run: echo "The new version is now $new_version" & mvn deploy
-      env:
-        new_version: ${{ steps.increment-version.outputs.new-version }}
+    - name: Bump Version
+      id: bump
+      uses: nnichols/maven-version-bump-action@v3
+      with:
+        github-token: ${{ secrets.github_token }}
+    - name: Print version & publish
+      run: "echo 'New Version: ${{ steps.bump.outputs.version }} '" & mvn deploy
         GITHUB_TOKEN: ${{ github.token }}

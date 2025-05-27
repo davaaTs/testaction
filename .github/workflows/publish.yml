@@ -14,7 +14,7 @@ jobs:
       with:
         java-version: '17'
         distribution: 'temurin'
-    - name: Increment version
+    - name: Increment (snapshot) version
       run: |
         CURRENT_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
         echo "current version $CURRENT_VERSION"
@@ -32,6 +32,9 @@ jobs:
         # Update version in pom.xml
         mvn versions:set -DnewVersion=$NEW_VERSION
         mvn versions:commit
+        
+        git config user.name "GitHub Actions"
+        git config user.email "actions@github.com"
         git add pom.xml
         git commit -m "Increment version to $NEW_VERSION"
         git tag "v$NEW_VERSION"
@@ -39,7 +42,7 @@ jobs:
       run: mvn deploy
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    - name: Increment version
+    - name: Increment version to next snapshot
       run: |
         # Extract current version and increment patch version
         CURRENT_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)

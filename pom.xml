@@ -28,6 +28,14 @@
       <name>GitHub Packages</name>
       <url>https://maven.pkg.github.com/davaaTs/testaction</url>
     </repository>
+<!--    <repository>-->
+<!--      <id>local-release</id>-->
+<!--      <url>file:../local_repo/release</url>-->
+<!--    </repository>-->
+<!--    <snapshotRepository>-->
+<!--      <id>local-snapshot</id>-->
+<!--      <url>file:../local_repo/snapshot</url>-->
+<!--    </snapshotRepository>-->
   </distributionManagement>
 
 </project>

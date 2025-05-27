@@ -18,7 +18,7 @@ jobs:
       run: |
         CURRENT_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
         echo "current version $CURRENT_VERSION"
-        if echo $CURRENT_VERSION | grep -iq "-SNAPSHOT"; then
+        if echo $CURRENT_VERSION | grep -iq "\-SNAPSHOT"; then
           LOWERCASE=${CURRENT_VERSION,,}
           NEW_VERSION="${LOWERCASE/-snapshot/}"
           echo $NEW_VERSION

@@ -32,6 +32,9 @@ jobs:
         # Update version in pom.xml
         mvn versions:set -DnewVersion=$NEW_VERSION
         mvn versions:commit
+        git add pom.xml
+        git commit -m "Increment version to $NEW_VERSION"
+        git tag "v$NEW_VERSION"
     - name: Publish package
       run: mvn deploy
       env:

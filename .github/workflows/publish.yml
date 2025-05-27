@@ -14,14 +14,13 @@ jobs:
       with:
         java-version: '17'
         distribution: 'temurin'
-    - name: Increment (snapshot) version
+    - name: increment version
       run: |
         CURRENT_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
         echo "current version $CURRENT_VERSION"
         if echo $CURRENT_VERSION | grep -iq "\-SNAPSHOT"; then
           LOWERCASE=${CURRENT_VERSION,,}
           NEW_VERSION="${LOWERCASE/-snapshot/}"
-          echo $NEW_VERSION
         else
           MAJOR=$(echo $CURRENT_VERSION | cut -d. -f1)
           MINOR=$(echo $CURRENT_VERSION | cut -d. -f2)
@@ -29,38 +28,40 @@ jobs:
           NEW_PATCH=$((PATCH + 1))
           NEW_VERSION="$MAJOR.$MINOR.$NEW_PATCH"
         fi
-        # Update version in pom.xml
-        mvn versions:set -DnewVersion=$NEW_VERSION
-        mvn versions:commit
-        
+        echo $NEW_VERSION
+        mvn -q versions:set -DnewVersion=$NEW_VERSION
+        mvn -q versions:commit
+
         git config user.name "GitHub Actions"
         git config user.email "actions@github.com"
         git add pom.xml
         git commit -m "Increment version to $NEW_VERSION"
         git tag "v$NEW_VERSION"
-    - name: Publish package
-      run: mvn deploy
+    - name: publish package
+      run: mvn -q deploy
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    - name: Increment version to next snapshot
+    - name: update version to snapshot
       run: |
-        # Extract current version and increment patch version
         CURRENT_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
         MAJOR=$(echo $CURRENT_VERSION | cut -d. -f1)
         MINOR=$(echo $CURRENT_VERSION | cut -d. -f2)
         PATCH=$(echo $CURRENT_VERSION | cut -d. -f3 | cut -d- -f1)
         NEW_PATCH=$((PATCH + 1))
         NEW_VERSION="$MAJOR.$MINOR.$NEW_PATCH-SNAPSHOT"
+        echo $NEW_VERSION
 
-        # Update version in pom.xml
+        # update version in pom.xml
         mvn versions:set -DnewVersion=$NEW_VERSION
         mvn versions:commit
-        # Commit and push the new snapshot version
-#        git add pom.xml
-#        git commit -m "Increment version to $NEW_VERSION"
+
+        # commit
+        git add pom.xml
+        git commit -m "Update version to $NEW_VERSION"
 #        git push origin $(git rev-parse --abbrev-ref HEAD)
-    - name: Commit & Push changes
-      uses: actions-js/push@master
+    - name: push
+      uses: ad-m/github-push-action@master
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        message: "Update version"
+        branch: ${{ github.ref }}
+        tags: true
